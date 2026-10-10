@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="烘焙质检员：一个基于信号检测论的蛋糕霉变检测交互实验。">
+  <title>烘焙质检员 · 信号检测论交互实验</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <main id="app">
+
+      <!-- ==================== 登录 ==================== -->
+      <section id="screen-login" class="screen active">
+        <div class="login-layout">
+          <div class="login-copy">
+            <p class="eyebrow">工程心理学 · 作业一</p>
+            <h1>烘焙质检员</h1>
+            <p class="login-sub">蛋糕霉变检测 · 信号检测论交互实验</p>
+            <p class="login-desc">
+              你是烘焙工厂的质检员。传送带上的每块蛋糕都有一个可疑斑点，
+              它可能是果酱斑或饼干碎屑，也可能是霉变菌落。
+              完成 20 次判断后，你会看到自己的混淆矩阵和完整 SDT 指标。
+            </p>
+            <div class="login-points">
+              <div><strong>20</strong><span>次判断</span></div>
+              <div><strong>d'</strong><span>可调难度</span></div>
+              <div><strong>5</strong><span>个概念实验室</span></div>
+            </div>
+          </div>
+          <div class="login-card">
+            <h2>开始质检</h2>
+            <label class="field-label" for="loginName">姓名 / 昵称</label>
+            <input id="loginName" class="text-input" type="text" maxlength="20" autocomplete="off">
+            <label class="field-label" for="loginId">学号</label>
+            <input id="loginId" class="text-input" type="text" maxlength="24" autocomplete="off">
+            <button id="btnLogin" class="btn btn-primary btn-block">进入质检台</button>
+            <button id="btnGuest" class="btn btn-ghost btn-block">游客模式</button>
+            <p class="form-hint">数据只保存在本机浏览器，不会上传到服务器。</p>
+            <p id="loginMsg" class="form-msg" role="alert"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 首页 / 参数设置 ==================== -->
+      <section id="screen-home" class="screen">
+        <header class="topbar">
+          <div class="brand-block">
+            <span class="brand">烘焙质检员</span>
+            <span class="brand-sub">Signal Detection Lab</span>
+          </div>
+          <div class="topbar-actions">
+            <span id="homeUser" class="user-chip">游客</span>
+            <button id="btnLogout" class="btn btn-small btn-ghost">退出</button>
+          </div>
+        </header>
+
+        <div class="home-grid">
+          <section class="panel intro-panel">
+            <div class="panel-heading">
+              <h2>今天的任务</h2>
+              <span class="panel-tag">LINE 04</span>
+            </div>
+            <p class="lead">
+              传送带会送来 20 块蛋糕。每块蛋糕上都有一个候选斑点：
+              正常蛋糕可能出现果酱斑或饼干碎屑；霉变蛋糕的斑点则更绿、更大、边缘更模糊。
+              你需要判断它是否“不合格”。
+            </p>
+            <div class="definition-grid">
+              <div class="definition-card signal">
+                <span class="def-kicker">信号 S</span>
+                <strong>霉变蛋糕</strong>
+                <span>需要拦截</span>
+              </div>
+              <div class="definition-card noise">
+                <span class="def-kicker">噪音 N</span>
+                <strong>正常蛋糕</strong>
+                <span>可以放行</span>
+              </div>
+              <div class="definition-card response">
+                <span class="def-kicker">判断</span>
+                <strong>合格 / 不合格</strong>
+                <span>F / 1 或 J / 2</span>
+              </div>
+            </div>
+
+            <div class="outcome-block">
+              <div class="outcome-title">四种结果的实际含义</div>
+              <table class="outcome-table">
+                <thead>
+                  <tr>
+                    <th>结果</th>
+                    <th>你的判断</th>
+                    <th>实际情况</th>
+                    <th>在质检中的含义</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-hit">
+                    <th>击中 H</th>
+                    <td>不合格</td>
+                    <td>有霉变</td>
+                    <td>成功拦截问题蛋糕</td>
+                  </tr>
+                  <tr class="row-miss">
+                    <th>漏报 M</th>
+                    <td>合格</td>
+                    <td>有霉变</td>
+                    <td>问题蛋糕流向市场，代价最高</td>
+                  </tr>
+                  <tr class="row-fa">
+                    <th>误报 FA</th>
+                    <td>不合格</td>
+                    <td>没有霉变</td>
+                    <td>正常蛋糕被误报废，代价较低</td>
+                  </tr>
+                  <tr class="row-cr">
+                    <th>正确拒斥 CR</th>
+                    <td>合格</td>
+                    <td>没有霉变</td>
+                    <td>正常蛋糕顺利放行</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="outcome-note">漏报代价远高于误报，所以在这个场景里，把标准放宽松一些通常更划算。</p>
+            </div>
+
+            <div class="preview-block">
+              <div class="preview-label">当前难度下的两个分布</div>
+              <svg id="homePreview" class="chart-svg" viewBox="0 0 640 220" role="img" aria-label="信号与噪音分布预览"></svg>
+            </div>
+          </section>
+
+          <section class="panel settings-panel">
+            <div class="panel-heading">
+              <h2>质检参数</h2>
+              <span class="panel-tag">20 TRIALS</span>
+            </div>
+
+            <label class="field-label" for="diffSlider">
+              难度 d'
+              <span id="diffValue" class="field-value">1.8</span>
+            </label>
+            <input id="diffSlider" class="slider" type="range" min="0.5" max="3.5" step="0.1" value="1.8">
+            <div class="range-labels"><span>困难 0.5</span><span>简单 3.5</span></div>
+            <p class="field-hint">d' 越小，正常斑点和霉斑越难区分。</p>
+
+            <label class="field-label">批次霉变率 P(S)</label>
+            <div class="segmented" id="priorGroup">
+              <button type="button" data-prior="0.2">20%</button>
+              <button type="button" data-prior="0.3">30%</button>
+              <button type="button" data-prior="0.5" class="active">50%</button>
+            </div>
+            <p id="priorHint" class="field-hint">课堂模式默认 50%，20 次中约 10 次为霉变蛋糕。</p>
+
+            <div class="payoff-mini-block">
+              <h3>代价设定</h3>
+              <p>漏检一块霉变蛋糕的代价远高于误判一块正常蛋糕。</p>
+              <div class="payoff-mini">
+                <span class="gain">H +10</span>
+                <span class="loss">M -20</span>
+                <span class="warn">FA -2</span>
+                <span class="gain">CR +5</span>
+              </div>
+            </div>
+
+            <button id="btnStart" class="btn btn-primary btn-block btn-large">开始 20 次质检</button>
+            <p class="field-hint">每试次刺激限时呈现 2.5 秒，消失后还有 2.0 秒作答时间，超时按“合格”计入。</p>
+            <div class="home-links">
+              <button id="btnLab" class="btn btn-ghost">概念实验室</button>
+              <button id="btnHistory" class="btn btn-ghost">我的记录</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- ==================== 游戏 ==================== -->
+      <section id="screen-game" class="screen">
+        <header class="topbar game-topbar">
+          <div class="brand-block">
+            <span class="brand">质检流水线</span>
+            <span class="brand-sub">LINE 04 · CAKE INSPECTION</span>
+          </div>
+          <div class="game-progress">
+            <span>第 <b id="trialNum">1</b> / 20 次</span>
+            <span id="trialCounter" class="muted">已记录 0 次</span>
+          </div>
+        </header>
+        <div class="game-stage">
+          <div id="gameInstruction" class="instruction-banner">
+            观察蛋糕上的候选斑点，判断这块蛋糕是否霉变。
+          </div>
+          <div class="canvas-frame">
+            <canvas id="gameCanvas" width="960" height="540" aria-label="蛋糕质检画面"></canvas>
+            <div class="scanline" aria-hidden="true"></div>
+          </div>
+          <div class="response-row">
+            <button id="btnPass" class="btn response-btn pass">
+              <span class="response-title">合格</span>
+              <span class="response-sub">没有霉变</span>
+              <span class="key">F / 1</span>
+            </button>
+            <button id="btnFail" class="btn response-btn fail">
+              <span class="response-title">不合格</span>
+              <span class="response-sub">发现霉变</span>
+              <span class="key">J / 2</span>
+            </button>
+          </div>
+          <div id="gameFeedback" class="feedback" role="status"></div>
+        </div>
+      </section>
+
+      <!-- ==================== 结果 ==================== -->
+      <section id="screen-results" class="screen">
+        <div class="results-wrap">
+          <header class="results-header">
+            <div>
+              <p class="eyebrow">质检报告</p>
+              <h1 id="resTitle">你的检测成绩</h1>
+              <p id="resSub" class="muted"></p>
+            </div>
+            <div class="results-actions">
+              <button id="btnReplay" class="btn btn-primary">再来一局</button>
+              <button id="btnResultsLab" class="btn btn-ghost">进入概念实验室</button>
+            </div>
+          </header>
+
+          <div class="results-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <h2>混淆矩阵</h2>
+                <span class="panel-tag">COUNTS</span>
+              </div>
+              <table class="confusion-table" id="confusionTable">
+                <thead>
+                  <tr>
+                    <th rowspan="2">你的判断</th>
+                    <th colspan="2">实际情况</th>
+                  </tr>
+                  <tr>
+                    <th>有信号（霉变）</th>
+                    <th>无信号（正常）</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>说“不合格”</th>
+                    <td class="cell-hit" id="resH">H = 0</td>
+                    <td class="cell-fa" id="resFA">FA = 0</td>
+                  </tr>
+                  <tr>
+                    <th>说“合格”</th>
+                    <td class="cell-miss" id="resM">M = 0</td>
+                    <td class="cell-cr" id="resCR">CR = 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <ul class="matrix-legend">
+                <li><b>击中 H</b>：实际有霉变，你判不合格</li>
+                <li><b>漏报 M</b>：实际有霉变，你判合格</li>
+                <li><b>误报 FA</b>：实际没有霉变，你判不合格</li>
+                <li><b>正确拒斥 CR</b>：实际没有霉变，你判合格</li>
+              </ul>
+            </section>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <h2>核心指标</h2>
+                <span class="panel-tag">SDT</span>
+              </div>
+              <div id="statsGrid" class="stats-grid"></div>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>结果解读</h2>
+              <span class="panel-tag">READ THIS</span>
+            </div>
+            <div id="interpretation" class="interpretation"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>为什么准确率不够</h2>
+              <span class="panel-tag">ABILITY vs CRITERION</span>
+            </div>
+            <p class="lead">
+              下面两位同学准确率相同，但判断标准完全不同。
+              一个很谨慎，只在很确定时才说“不合格”；另一个很宽松，稍有可疑就拦截。
+            </p>
+            <div class="table-scroll">
+              <table class="data-table" id="comparisonTable">
+                <thead>
+                  <tr><th>类型</th><th>P(Hit)</th><th>P(FA)</th><th>d'</th><th>c</th><th>准确率</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>你的标准划算吗</h2>
+              <span class="panel-tag">PAYOFF</span>
+            </div>
+            <div id="payoffAnalysis" class="payoff-analysis"></div>
+          </section>
+
+          <div class="results-footer-actions">
+            <button id="btnResultsHistory" class="btn btn-ghost">查看历史记录</button>
+            <button id="btnExportRun" class="btn btn-ghost">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              导出本局 CSV
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 概念实验室 ==================== -->
+      <section id="screen-lab" class="screen">
+        <header class="topbar">
+          <div class="brand-block">
+            <span class="brand">概念实验室</span>
+            <span class="brand-sub">拖动滑块，观察参数如何改变判断结果</span>
+          </div>
+          <button id="btnLabBack" class="btn btn-small btn-ghost">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            返回
+          </button>
+        </header>
+
+        <div id="labTabs" class="lab-tabs">
+          <button type="button" data-tab="dist" class="active">两个分布</button>
+          <button type="button" data-tab="roc">ROC 曲线</button>
+          <button type="button" data-tab="payoff">先验与奖惩</button>
+          <button type="button" data-tab="ml">AI / 机器学习</button>
+          <button type="button" data-tab="vigilance">警觉模拟</button>
+        </div>
+
+        <div class="lab-body">
+          <section id="lab-dist" class="lab-panel active">
+            <div class="lab-grid">
+              <div class="lab-controls panel">
+                <h2>两个分布与判定标准</h2>
+                <label class="field-label" for="labDiff">敏感性 d' <span id="labDiffValue" class="field-value">1.5</span></label>
+                <input id="labDiff" class="slider" type="range" min="0" max="4" step="0.1" value="1.5">
+                <label class="field-label" for="labC">判定标准 c <span id="labCValue" class="field-value">0.00</span></label>
+                <input id="labC" class="slider" type="range" min="-2" max="2" step="0.05" value="0">
+                <p class="field-hint">d' 越大，两个分布分得越开；c 改变的是判定线的位置。</p>
+                <div id="distStats" class="stats-grid small"></div>
+                <table class="confusion-table compact" id="distMatrix"></table>
+              </div>
+              <div class="panel chart-panel">
+                <svg id="distChart" class="chart-svg" viewBox="0 0 720 400" role="img" aria-label="信号与噪音分布"></svg>
+                <p class="chart-note">阴影面积就是四种结果的概率：H、M、FA、CR。</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="lab-roc" class="lab-panel">
+            <div class="lab-grid">
+              <div class="lab-controls panel">
+                <h2>ROC 曲线</h2>
+                <label class="field-label" for="rocDiff">敏感性 d' <span id="rocDiffValue" class="field-value">1.5</span></label>
+                <input id="rocDiff" class="slider" type="range" min="0" max="4" step="0.1" value="1.5">
+                <label class="field-label" for="rocC">判定标准 c <span id="rocCValue" class="field-value">0.00</span></label>
+                <input id="rocC" class="slider" type="range" min="-2" max="2" step="0.05" value="0">
+                <label class="field-label" for="rocSigma">信号分布方差 σ(SN) <span id="rocSigmaValue" class="field-value">1.0</span></label>
+                <input id="rocSigma" class="slider" type="range" min="0.5" max="2" step="0.05" value="1">
+                <p class="field-hint">同一 d' 下改变 c，点会沿着同一条 ROC 曲线移动。</p>
+                <div id="rocStats" class="stats-grid small"></div>
+              </div>
+              <div class="panel chart-panel">
+                <svg id="rocChart" class="chart-svg" viewBox="0 0 720 360" role="img" aria-label="ROC 曲线"></svg>
+                <svg id="zrocChart" class="chart-svg" viewBox="0 0 720 360" role="img" aria-label="z 变换 ROC 曲线"></svg>
+              </div>
+            </div>
+          </section>
+
+          <section id="lab-payoff" class="lab-panel">
+            <div class="lab-grid">
+              <div class="lab-controls panel">
+                <h2>先验概率与最优 β</h2>
+                <label class="field-label" for="payPrior">P(S) 霉变先验概率 <span id="payPriorValue" class="field-value">0.50</span></label>
+                <input id="payPrior" class="slider" type="range" min="0.01" max="0.99" step="0.01" value="0.5">
+                <label class="field-label" for="payC">当前标准 c <span id="payCValue" class="field-value">0.00</span></label>
+                <input id="payC" class="slider" type="range" min="-2" max="2" step="0.05" value="0">
+                <label class="field-label" for="payD">当前能力 d' <span id="payDValue" class="field-value">1.80</span></label>
+                <input id="payD" class="slider" type="range" min="0.5" max="3.5" step="0.1" value="1.8">
+                <div class="payoff-inputs">
+                  <label>V(H) <input id="payVH" type="number" step="1" value="10"></label>
+                  <label>C(M) <input id="payVM" type="number" step="1" value="-20"></label>
+                  <label>C(FA) <input id="payVFA" type="number" step="1" value="-2"></label>
+                  <label>V(CR) <input id="payVCR" type="number" step="1" value="5"></label>
+                </div>
+                <div id="payoffStats" class="stats-grid small"></div>
+              </div>
+              <div class="panel chart-panel">
+                <svg id="payoffChart" class="chart-svg" viewBox="0 0 720 360" role="img" aria-label="最优判定线"></svg>
+                <p class="chart-note">
+                  漏检代价越高，最优 β 越小，最优判定线越往左移，也就是越宽松。
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="lab-ml" class="lab-panel">
+            <div class="lab-grid">
+              <div class="lab-controls panel">
+                <h2>SDT 与机器视觉</h2>
+                <label class="field-label" for="mlAuc">模型 AUC <span id="mlAucValue" class="field-value">0.85</span></label>
+                <input id="mlAuc" class="slider" type="range" min="0.5" max="0.99" step="0.01" value="0.85">
+                <label class="field-label" for="mlThreshold">分类阈值（负例累积比例） <span id="mlThresholdValue" class="field-value">0.80</span></label>
+                <input id="mlThreshold" class="slider" type="range" min="0.01" max="0.99" step="0.01" value="0.8">
+                <p class="field-hint">
+                  自动分拣机的 AUC 对应 SDT 的敏感性；阈值对应判定标准。
+                </p>
+                <div id="mlStats" class="stats-grid small"></div>
+              </div>
+              <div class="panel chart-panel">
+                <svg id="mlChart" class="chart-svg" viewBox="0 0 720 360" role="img" aria-label="机器视觉分数分布"></svg>
+                <table class="confusion-table compact" id="mlMatrix"></table>
+              </div>
+            </div>
+          </section>
+
+          <section id="lab-vigilance" class="lab-panel">
+            <div class="lab-grid">
+              <div class="lab-controls panel">
+                <h2>警觉衰退模拟</h2>
+                <p class="lead">
+                  模拟 Mackworth 钟实验：连续监控 2 小时，每 15 分钟一个时段，
+                  每时段 30 个信号和 270 个噪音事件。
+                </p>
+                <label class="check-row">
+                  <input id="vigD" type="checkbox" checked>
+                  敏感性下降：d' 随时间降低（唤醒 / 资源理论）
+                </label>
+                <label class="check-row">
+                  <input id="vigC" type="checkbox" checked>
+                  标准偏移：c 随时间升高（期望理论）
+                </label>
+                <button id="btnRunVig" class="btn btn-primary btn-block">开始模拟</button>
+                <div id="vigStats" class="stats-grid small"></div>
+                <p class="field-hint">
+                  阻止技术：目标样例、降低事件率、培训、休息、结果反馈、虚假信号、置信水平报告。
+                </p>
+              </div>
+              <div class="panel chart-panel">
+                <svg id="vigDChart" class="chart-svg" viewBox="0 0 720 280" role="img" aria-label="d' 随时间变化"></svg>
+                <svg id="vigCChart" class="chart-svg" viewBox="0 0 720 280" role="img" aria-label="c 随时间变化"></svg>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- ==================== 我的记录 ==================== -->
+      <section id="screen-history" class="screen">
+        <header class="topbar">
+          <div class="brand-block">
+            <span class="brand">我的记录</span>
+            <span class="brand-sub">本机 localStorage · 不涉及服务器</span>
+          </div>
+          <button id="btnHistoryBack" class="btn btn-small btn-ghost">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            返回
+          </button>
+        </header>
+        <div id="historySummary" class="summary-row"></div>
+        <div class="history-grid">
+          <section class="panel chart-panel">
+            <h2>多局趋势</h2>
+            <svg id="historyTrendChart" class="chart-svg" viewBox="0 0 720 340" role="img" aria-label="多局 d'、c、准确率趋势"></svg>
+          </section>
+          <section class="panel chart-panel">
+            <h2>个人 ROC 点</h2>
+            <svg id="historyRocChart" class="chart-svg" viewBox="0 0 720 340" role="img" aria-label="个人历史 ROC 散点"></svg>
+          </section>
+        </div>
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>历史局</h2>
+            <div class="panel-actions">
+              <button id="btnExportHistoryCsv" class="btn btn-small btn-ghost">导出 CSV</button>
+              <button id="btnExportHistoryJson" class="btn btn-small btn-ghost">导出 JSON</button>
+              <label class="btn btn-small btn-ghost file-btn">
+                导入 JSON
+                <input id="importHistory" type="file" accept="application/json" hidden>
+              </label>
+              <button id="btnClearHistory" class="btn btn-small btn-danger-ghost">清空</button>
+            </div>
+          </div>
+          <div id="historyList" class="history-list"></div>
+        </section>
+      </section>
+
+    </main>
+    <footer class="site-footer">
+      <span>烘焙质检员 · 信号检测论交互实验</span>
+      <span>工程心理学 · 作业一</span>
+    </footer>
+  </div>
+
+  <script src="js/math.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/trials.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/results.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/lab.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
