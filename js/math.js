@@ -262,18 +262,18 @@
   }
 
   function describeDPrime(dPrime) {
-    if (!isFinite(dPrime)) return "区分能力无法估计";
-    if (dPrime < 0.5) return "几乎无法区分正常斑点和霉斑";
-    if (dPrime < 1.5) return "区分能力较弱，容易受干扰";
-    if (dPrime < 2.5) return "区分能力中等，能抓住主要线索";
-    return "区分能力较强，能稳定识别霉变特征";
+    if (!isFinite(dPrime)) return "分辨能力无法估计";
+    if (dPrime < 0.5) return "几乎无法分辨坏蛋糕和好蛋糕";
+    if (dPrime < 1.5) return "分辨能力较弱，容易被斑点干扰";
+    if (dPrime < 2.5) return "分辨能力中等，能抓住主要线索";
+    return "分辨能力较强，能稳定识别坏蛋糕";
   }
 
   function describeC(c) {
     if (!isFinite(c)) return "判断标准无法估计";
-    if (c < -0.3) return "你的标准偏宽松，倾向于多拦截可疑蛋糕";
-    if (c > 0.3) return "你的标准偏严格，只在很确定时才判不合格";
-    return "你的标准比较中性，不偏向任何一边";
+    if (c < -0.3) return "你的标准偏宽松，宁可冒险也不想多扔";
+    if (c > 0.3) return "你的标准偏严格，宁可多扔也绝不卖出坏蛋糕";
+    return "你的标准比较中性";
   }
 
   function csvEscape(value) {

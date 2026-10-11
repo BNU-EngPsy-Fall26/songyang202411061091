@@ -1066,15 +1066,15 @@
     ctx.font = (11 * scale) + 'px "Cascadia Mono", monospace';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillText('LINE 04 · CAKE INSPECTION', pad + 12 * scale, pad + 8 * scale);
+    ctx.fillText('MIDNIGHT BAKERY · LAST BATCH', pad + 12 * scale, pad + 8 * scale);
     ctx.textAlign = 'right';
-    ctx.fillText('BATCH 2026-10-03', w - pad - 12 * scale, pad + 8 * scale);
+    ctx.fillText('FESTIVAL EVE · 20 CAKES', w - pad - 12 * scale, pad + 8 * scale);
 
     ctx.textAlign = 'left';
     ctx.textBaseline = 'bottom';
-    ctx.fillText('SAMPLE ' + String(state.trialIndex + 1).padStart(2, '0') + ' / ' + state.total, pad + 12 * scale, h - pad - 10 * scale);
+    ctx.fillText('CAKE ' + String(state.trialIndex + 1).padStart(2, '0') + ' / ' + state.total, pad + 12 * scale, h - pad - 10 * scale);
     ctx.textAlign = 'right';
-    ctx.fillText('F = 合格   J = 不合格', w - pad - 12 * scale, h - pad - 10 * scale);
+    ctx.fillText('F = 可以卖   J = 不能卖', w - pad - 12 * scale, h - pad - 10 * scale);
 
     /* 进度条 */
     var barX = w * 0.30;

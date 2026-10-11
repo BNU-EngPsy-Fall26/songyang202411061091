@@ -133,7 +133,7 @@
     updateHud();
     setFeedback('', '');
     setResponseEnabled(false);
-    setInstruction('样本正在进入质检台……');
+    setInstruction('今晚的最后一炉开始了……');
     if (NS.app && NS.app.showScreen) NS.app.showScreen('screen-game');
     startLoop();
     nextTrial();
@@ -157,7 +157,7 @@
     state.lastResult = null;
     setResponseEnabled(false);
     setFeedback('', '');
-    setInstruction('样本进入质检台，等待质检灯扫描……');
+    setInstruction('下一块蛋糕送来了，仔细看……');
     updateHud();
 
     clearTimeout(revealTimer);
@@ -172,14 +172,14 @@
       state.stimulusOnset = state.revealTime;
       state.stimulusDeadline = state.revealTime + STIMULUS_MS + GRACE_MS;
       setResponseEnabled(true);
-      setInstruction('刺激呈现约 ' + (STIMULUS_MS / 1000).toFixed(1) + ' 秒，请尽快判断：合格，还是不合格？');
+      setInstruction('这块能卖吗？可以卖按 F / 1，不能卖按 J / 2。');
 
       /* 刺激限时：到时后刺激消失 */
       stimulusOffTimer = setTimeout(function () {
         if (!state.active || state.awaiting) return;
         state.showSpot = false;
         state.stimulusVisible = false;
-        setInstruction('刺激已消失，请在剩余时间内作答。');
+        setInstruction('斑点消失了，凭刚才的印象决定。');
       }, STIMULUS_MS);
 
       /* 反应时限：超时未作答自动计入 */
@@ -219,12 +219,12 @@
     state.phase = 'feedback';
     updateHud();
 
-    var labels = { H: '击中', M: '漏报', FA: '误报', CR: '正确拒斥' };
+    var labels = { H: '拦下了', M: '卖出去了', FA: '扔掉了', CR: '上架了' };
     var details = {
-      H: '实际有霉变，你判了不合格。',
-      M: '实际有霉变，你判了合格。',
-      FA: '实际没有霉变，你判了不合格。',
-      CR: '实际没有霉变，你判了合格。'
+      H: '实际有霉变，你决定不能卖。',
+      M: '实际有霉变，你决定可以卖。',
+      FA: '实际没有霉变，你决定不能卖。',
+      CR: '实际没有霉变，你决定可以卖。'
     };
     var className = (type === 'H' || type === 'CR') ? 'correct' : 'wrong';
     var displayLabel;
@@ -234,7 +234,7 @@
     if (isTimeout) {
       displayLabel = '超时未答';
       displayType = '';
-      displayDetail = (signalPresent ? '实际有霉变。' : '实际没有霉变。') + '按“合格”计入结果。';
+      displayDetail = (signalPresent ? '实际有霉变。' : '实际没有霉变。') + '按“可以卖”计入结果。';
       className = 'wrong';
     } else {
       displayLabel = labels[type];

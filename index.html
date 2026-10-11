@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="烘焙质检员：一个基于信号检测论的蛋糕霉变检测交互实验。">
-  <title>烘焙质检员 · 信号检测论交互实验</title>
+  <meta name="description" content="午夜烘焙铺 · 最后一炉：一个基于信号检测论的蛋糕霉变判断交互实验。">
+  <title>午夜烘焙铺 · 最后一炉 | 信号检测论交互实验</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,13 +16,16 @@
         <div class="login-layout">
           <div class="login-copy">
             <p class="eyebrow">工程心理学 · 作业一</p>
-            <h1>烘焙质检员</h1>
-            <p class="login-sub">蛋糕霉变检测 · 信号检测论交互实验</p>
-            <p class="login-desc">
-              你是烘焙工厂的质检员。传送带上的每块蛋糕都有一个可疑斑点，
-              它可能是果酱斑或饼干碎屑，也可能是霉变菌落。
-              完成 20 次判断后，你会看到自己的混淆矩阵和完整 SDT 指标。
-            </p>
+            <h1>午夜烘焙铺</h1>
+            <p class="login-sub">最后一炉 · 信号检测论交互实验</p>
+            <div class="story-opening">
+              <p>晚上 11:40。</p>
+              <p>明天是小镇的甜点节。</p>
+              <p>两个小时前，冷库跳闸了。</p>
+              <p>你面前是最后 20 块蛋糕。</p>
+              <p>卖出一块坏的，可能有人会生病；扔掉太多，你明天就交不出订单。</p>
+              <p class="story-question">盯着每块蛋糕上的斑点，做出你的决定。</p>
+            </div>
             <div class="login-points">
               <div><strong>20</strong><span>次判断</span></div>
               <div><strong>d'</strong><span>可调难度</span></div>
@@ -30,12 +33,12 @@
             </div>
           </div>
           <div class="login-card">
-            <h2>开始质检</h2>
+            <h2>开始今晚的最后一炉</h2>
             <label class="field-label" for="loginName">姓名 / 昵称</label>
             <input id="loginName" class="text-input" type="text" maxlength="20" autocomplete="off">
             <label class="field-label" for="loginId">学号</label>
             <input id="loginId" class="text-input" type="text" maxlength="24" autocomplete="off">
-            <button id="btnLogin" class="btn btn-primary btn-block">进入质检台</button>
+            <button id="btnLogin" class="btn btn-primary btn-block">进入烘焙铺</button>
             <button id="btnGuest" class="btn btn-ghost btn-block">游客模式</button>
             <p class="form-hint">数据只保存在本机浏览器，不会上传到服务器。</p>
             <p id="loginMsg" class="form-msg" role="alert"></p>
@@ -47,8 +50,8 @@
       <section id="screen-home" class="screen">
         <header class="topbar">
           <div class="brand-block">
-            <span class="brand">烘焙质检员</span>
-            <span class="brand-sub">Signal Detection Lab</span>
+            <span class="brand">午夜烘焙铺</span>
+            <span class="brand-sub">Midnight Bakery · Last Batch</span>
           </div>
           <div class="topbar-actions">
             <span id="homeUser" class="user-chip">游客</span>
@@ -59,28 +62,27 @@
         <div class="home-grid">
           <section class="panel intro-panel">
             <div class="panel-heading">
-              <h2>今天的任务</h2>
-              <span class="panel-tag">LINE 04</span>
+              <h2>今晚的最后一炉</h2>
+              <span class="panel-tag">20 CAKES</span>
             </div>
             <p class="lead">
-              传送带会送来 20 块蛋糕。每块蛋糕上都有一个候选斑点：
-              正常蛋糕可能出现果酱斑或饼干碎屑；霉变蛋糕的斑点则更绿、更大、边缘更模糊。
-              你需要判断它是否“不合格”。
+              冷库跳闸后，你面前只剩 20 块蛋糕。每块蛋糕上都有一个可疑斑点：
+              它可能是果酱斑或饼干碎屑，也可能是霉变菌落。你需要决定它能不能上架。
             </p>
             <div class="definition-grid">
               <div class="definition-card signal">
                 <span class="def-kicker">信号 S</span>
-                <strong>霉变蛋糕</strong>
-                <span>需要拦截</span>
+                <strong>坏掉的蛋糕</strong>
+                <span>不能卖</span>
               </div>
               <div class="definition-card noise">
                 <span class="def-kicker">噪音 N</span>
                 <strong>正常蛋糕</strong>
-                <span>可以放行</span>
+                <span>可以卖</span>
               </div>
               <div class="definition-card response">
                 <span class="def-kicker">判断</span>
-                <strong>合格 / 不合格</strong>
+                <strong>可以卖 / 不能卖</strong>
                 <span>F / 1 或 J / 2</span>
               </div>
             </div>
@@ -93,37 +95,37 @@
                     <th>结果</th>
                     <th>你的判断</th>
                     <th>实际情况</th>
-                    <th>在质检中的含义</th>
+                    <th>在今晚的含义</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr class="row-hit">
                     <th>击中 H</th>
-                    <td>不合格</td>
+                    <td>不能卖</td>
                     <td>有霉变</td>
-                    <td>成功拦截问题蛋糕</td>
+                    <td>拦下了坏蛋糕</td>
                   </tr>
                   <tr class="row-miss">
                     <th>漏报 M</th>
-                    <td>合格</td>
+                    <td>可以卖</td>
                     <td>有霉变</td>
-                    <td>问题蛋糕流向市场，代价最高</td>
+                    <td>坏蛋糕被卖出，可能有人吃坏肚子</td>
                   </tr>
                   <tr class="row-fa">
                     <th>误报 FA</th>
-                    <td>不合格</td>
+                    <td>不能卖</td>
                     <td>没有霉变</td>
-                    <td>正常蛋糕被误报废，代价较低</td>
+                    <td>好蛋糕被扔掉，订单少了一块</td>
                   </tr>
                   <tr class="row-cr">
                     <th>正确拒斥 CR</th>
-                    <td>合格</td>
+                    <td>可以卖</td>
                     <td>没有霉变</td>
-                    <td>正常蛋糕顺利放行</td>
+                    <td>好蛋糕顺利上架</td>
                   </tr>
                 </tbody>
               </table>
-              <p class="outcome-note">漏报代价远高于误报，所以在这个场景里，把标准放宽松一些通常更划算。</p>
+              <p class="outcome-note">卖出一块坏蛋糕的后果更严重；但扔得太多，明天就交不出订单。你需要在这两者之间找到自己的标准。</p>
             </div>
 
             <div class="preview-block">
@@ -134,7 +136,7 @@
 
           <section class="panel settings-panel">
             <div class="panel-heading">
-              <h2>质检参数</h2>
+              <h2>今晚的判断</h2>
               <span class="panel-tag">20 TRIALS</span>
             </div>
 
@@ -146,17 +148,17 @@
             <div class="range-labels"><span>困难 0.5</span><span>简单 3.5</span></div>
             <p class="field-hint">d' 越小，正常斑点和霉斑越难区分。</p>
 
-            <label class="field-label">批次霉变率 P(S)</label>
+            <label class="field-label">坏蛋糕的比例 P(S)</label>
             <div class="segmented" id="priorGroup">
               <button type="button" data-prior="0.2">20%</button>
               <button type="button" data-prior="0.3">30%</button>
               <button type="button" data-prior="0.5" class="active">50%</button>
             </div>
-            <p id="priorHint" class="field-hint">课堂模式默认 50%，20 次中约 10 次为霉变蛋糕。</p>
+            <p id="priorHint" class="field-hint">课堂模式默认 50%，20 块中约 10 块是坏蛋糕。</p>
 
             <div class="payoff-mini-block">
-              <h3>代价设定</h3>
-              <p>漏检一块霉变蛋糕的代价远高于误判一块正常蛋糕。</p>
+              <h3>后果设定</h3>
+              <p>卖出一块坏蛋糕，可能有人生病；扔掉一块好蛋糕，只是少赚一点。</p>
               <div class="payoff-mini">
                 <span class="gain">H +10</span>
                 <span class="loss">M -20</span>
@@ -165,8 +167,8 @@
               </div>
             </div>
 
-            <button id="btnStart" class="btn btn-primary btn-block btn-large">开始 20 次质检</button>
-            <p class="field-hint">每试次刺激限时呈现 2.5 秒，消失后还有 2.0 秒作答时间，超时按“合格”计入。</p>
+            <button id="btnStart" class="btn btn-primary btn-block btn-large">开始今晚的最后一炉</button>
+            <p class="field-hint">每块蛋糕只看 2.5 秒，之后还有 2.0 秒决定是否上架，超时按“可以卖”计入。</p>
             <div class="home-links">
               <button id="btnLab" class="btn btn-ghost">概念实验室</button>
               <button id="btnHistory" class="btn btn-ghost">我的记录</button>
@@ -179,8 +181,8 @@
       <section id="screen-game" class="screen">
         <header class="topbar game-topbar">
           <div class="brand-block">
-            <span class="brand">质检流水线</span>
-            <span class="brand-sub">LINE 04 · CAKE INSPECTION</span>
+            <span class="brand">最后一炉</span>
+            <span class="brand-sub">LAST BATCH · MIDNIGHT SHIFT</span>
           </div>
           <div class="game-progress">
             <span>第 <b id="trialNum">1</b> / 20 次</span>
@@ -189,7 +191,7 @@
         </header>
         <div class="game-stage">
           <div id="gameInstruction" class="instruction-banner">
-            观察蛋糕上的候选斑点，判断这块蛋糕是否霉变。
+            仔细看这块蛋糕上的斑点，决定它能不能上架。
           </div>
           <div class="canvas-frame">
             <canvas id="gameCanvas" width="960" height="540" aria-label="蛋糕质检画面"></canvas>
@@ -197,13 +199,13 @@
           </div>
           <div class="response-row">
             <button id="btnPass" class="btn response-btn pass">
-              <span class="response-title">合格</span>
-              <span class="response-sub">没有霉变</span>
+              <span class="response-title">可以卖</span>
+              <span class="response-sub">看起来没问题</span>
               <span class="key">F / 1</span>
             </button>
             <button id="btnFail" class="btn response-btn fail">
-              <span class="response-title">不合格</span>
-              <span class="response-sub">发现霉变</span>
+              <span class="response-title">不能卖</span>
+              <span class="response-sub">怀疑已经坏了</span>
               <span class="key">J / 2</span>
             </button>
           </div>
@@ -216,8 +218,8 @@
         <div class="results-wrap">
           <header class="results-header">
             <div>
-              <p class="eyebrow">质检报告</p>
-              <h1 id="resTitle">你的检测成绩</h1>
+              <p class="eyebrow">今晚的结局</p>
+              <h1 id="resTitle">最后一炉的结果</h1>
               <p id="resSub" class="muted"></p>
             </div>
             <div class="results-actions">
@@ -226,47 +228,51 @@
             </div>
           </header>
 
+          <section class="panel story-ending-panel">
+            <div id="storyEnding" class="story-ending"></div>
+          </section>
+
           <div class="results-grid">
             <section class="panel">
               <div class="panel-heading">
-                <h2>混淆矩阵</h2>
+                <h2>今晚的判断记录</h2>
                 <span class="panel-tag">COUNTS</span>
               </div>
               <table class="confusion-table" id="confusionTable">
                 <thead>
                   <tr>
-                    <th rowspan="2">你的判断</th>
+                    <th rowspan="2">你的决定</th>
                     <th colspan="2">实际情况</th>
                   </tr>
                   <tr>
-                    <th>有信号（霉变）</th>
-                    <th>无信号（正常）</th>
+                    <th>有霉变</th>
+                    <th>正常</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <th>说“不合格”</th>
+                    <th>说“不能卖”</th>
                     <td class="cell-hit" id="resH">H = 0</td>
                     <td class="cell-fa" id="resFA">FA = 0</td>
                   </tr>
                   <tr>
-                    <th>说“合格”</th>
+                    <th>说“可以卖”</th>
                     <td class="cell-miss" id="resM">M = 0</td>
                     <td class="cell-cr" id="resCR">CR = 0</td>
                   </tr>
                 </tbody>
               </table>
               <ul class="matrix-legend">
-                <li><b>击中 H</b>：实际有霉变，你判不合格</li>
-                <li><b>漏报 M</b>：实际有霉变，你判合格</li>
-                <li><b>误报 FA</b>：实际没有霉变，你判不合格</li>
-                <li><b>正确拒斥 CR</b>：实际没有霉变，你判合格</li>
+                <li><b>击中 H</b>：坏蛋糕被拦下</li>
+                <li><b>漏报 M</b>：坏蛋糕被卖出去</li>
+                <li><b>误报 FA</b>：好蛋糕被扔掉</li>
+                <li><b>正确拒斥 CR</b>：好蛋糕顺利上架</li>
               </ul>
             </section>
 
             <section class="panel">
               <div class="panel-heading">
-                <h2>核心指标</h2>
+                <h2>你的判断表现</h2>
                 <span class="panel-tag">SDT</span>
               </div>
               <div id="statsGrid" class="stats-grid"></div>
@@ -275,7 +281,7 @@
 
           <section class="panel">
             <div class="panel-heading">
-              <h2>结果解读</h2>
+              <h2>为什么会是这个结局</h2>
               <span class="panel-tag">READ THIS</span>
             </div>
             <div id="interpretation" class="interpretation"></div>
@@ -283,12 +289,12 @@
 
           <section class="panel">
             <div class="panel-heading">
-              <h2>为什么准确率不够</h2>
+              <h2>能力和标准，谁决定了结局</h2>
               <span class="panel-tag">ABILITY vs CRITERION</span>
             </div>
             <p class="lead">
-              下面两位同学准确率相同，但判断标准完全不同。
-              一个很谨慎，只在很确定时才说“不合格”；另一个很宽松，稍有可疑就拦截。
+              下面两位店主的总正确率相同，但判断标准完全不同。
+              一个宁可多扔，也绝不卖出坏蛋糕；另一个宁可冒险，也不愿浪费订单。
             </p>
             <div class="table-scroll">
               <table class="data-table" id="comparisonTable">
@@ -302,7 +308,7 @@
 
           <section class="panel">
             <div class="panel-heading">
-              <h2>你的标准划算吗</h2>
+              <h2>如果能重来，标准划算吗</h2>
               <span class="panel-tag">PAYOFF</span>
             </div>
             <div id="payoffAnalysis" class="payoff-analysis"></div>
@@ -323,7 +329,7 @@
         <header class="topbar">
           <div class="brand-block">
             <span class="brand">概念实验室</span>
-            <span class="brand-sub">拖动滑块，观察参数如何改变判断结果</span>
+            <span class="brand-sub">回到今晚 11:40，看看标准如何改变结局</span>
           </div>
           <button id="btnLabBack" class="btn btn-small btn-ghost">
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -499,7 +505,7 @@
 
     </main>
     <footer class="site-footer">
-      <span>烘焙质检员 · 信号检测论交互实验</span>
+      <span>午夜烘焙铺 · 最后一炉</span>
       <span>工程心理学 · 作业一</span>
     </footer>
   </div>

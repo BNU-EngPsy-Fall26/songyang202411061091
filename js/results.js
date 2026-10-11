@@ -20,12 +20,12 @@
 
   function renderStats(run) {
     var cards = [
-      statCard('P(Hit)', M.format(run.pH, 3), true),
-      statCard('P(FA)', M.format(run.pFA, 3)),
-      statCard("d'（敏感性）", M.format(run.dPrime, 2), true),
-      statCard('c（标准）', M.signed(run.c, 2), true),
-      statCard('β（似然比）', M.format(run.beta, 2)),
-      statCard('准确率', M.pct(run.accuracy, 1)),
+      statCard('拦下率 P(Hit)', M.format(run.pH, 3), true),
+      statCard('误扔率 P(FA)', M.format(run.pFA, 3)),
+      statCard("分辨能力 d'", M.format(run.dPrime, 2), true),
+      statCard('判断标准 c', M.signed(run.c, 2), true),
+      statCard('似然比 β', M.format(run.beta, 2)),
+      statCard('总判断正确率', M.pct(run.accuracy, 1)),
       statCard('平均反应时', isFinite(run.meanRT) ? M.format(run.meanRT, 0) + ' ms' : '—'),
       statCard("A'（非参数）", M.format(run.aPrime, 3))
     ];
@@ -41,28 +41,28 @@
     var items = [];
 
     items.push({
-      title: "敏感性 d' = " + M.format(run.dPrime, 2),
+      title: "分辨能力 d' = " + M.format(run.dPrime, 2),
       text: M.describeDPrime(run.dPrime) +
-        "。d' 衡量的是你区分正常蛋糕和霉变蛋糕的能力，和敢不敢判不合格无关。"
+        "。d' 衡量的是你能不能分辨坏蛋糕和好蛋糕，和敢不敢冒险无关。"
     });
 
     items.push({
       title: '判断标准 c = ' + M.signed(run.c, 2),
       text: M.describeC(run.c) +
-        "。负 c 表示标准偏宽松，正 c 表示标准偏严格。"
+        "。负 c 表示标准偏宽松，宁可冒险也不想多扔；正 c 表示标准偏严格，宁可多扔也绝不卖出坏蛋糕。"
     });
 
     items.push({
-      title: '准确率 = ' + M.pct(run.accuracy, 1),
-      text: '准确率同时受到 d\' 和 c 的影响。两个人可以准确率相同，但一个靠能力，一个靠策略。请结合 d\' 和 c 一起看。'
+      title: '总判断正确率 = ' + M.pct(run.accuracy, 1),
+      text: '总正确率同时受到 d\' 和 c 的影响。两位店主的正确率可能一样，但一个靠分辨能力，一个靠冒险或保守的策略。'
     });
 
     if (isFinite(cStar)) {
       items.push({
-        title: '考虑代价后的最优标准 c* = ' + M.signed(cStar, 2),
+        title: '考虑后果后的最优标准 c* = ' + M.signed(cStar, 2),
         text: '最优 β = ' + M.format(betaStar, 2) +
           '。你的 c 与 c* 的差值为 ' + M.signed(run.c - cStar, 2) +
-          '。漏检代价越高，最优标准越应该往负方向移动。'
+          '。卖出坏蛋糕的后果越严重，最优标准越应该往负方向移动。'
       });
     }
 
@@ -73,8 +73,8 @@
 
   function renderComparison(run) {
     var rows = [
-      { name: '谨慎型同学', pH: 0.60, pFA: 0.10, d: 1.80, c: 0.51, acc: 0.75 },
-      { name: '宽松型同学', pH: 0.90, pFA: 0.40, d: 1.80, c: -0.51, acc: 0.75 },
+      { name: '谨慎店主（宁可多扔）', pH: 0.60, pFA: 0.10, d: 1.80, c: 0.51, acc: 0.75 },
+      { name: '宽松店主（宁可冒险）', pH: 0.90, pFA: 0.40, d: 1.80, c: -0.51, acc: 0.75 },
       {
         name: '你',
         pH: run.pH,
@@ -118,10 +118,10 @@
       var optimalEV = M.expectedValue(optimalProbs, run.pS, values);
       gap = (optimalEV - yourEV) * 100;
       if (gap > 5) {
-        message = '你的判断标准和当前代价结构不太匹配。按每 100 块蛋糕计算，调整到最优标准大约可以多获得 ' +
+        message = '你的判断标准和今晚的后果设定不太匹配。如果每 100 个晚上都这样判断，调整到最优标准大约可以多挽回 ' +
           M.format(gap, 1) + ' 个收益点。';
       } else if (gap > 0) {
-        message = '你的判断标准已经接近最优，按每 100 块蛋糕计算，差距约为 ' +
+        message = '你的判断标准已经接近最优，如果每 100 个晚上都这样判断，差距约为 ' +
           M.format(gap, 1) + ' 个收益点。';
       } else {
         message = '你的判断标准在这个代价结构下已经非常接近最优，继续保持。';
@@ -136,11 +136,63 @@
     ].join('');
   }
 
+  function renderEnding(run) {
+    var nSig = run.H + run.M;
+    var nNoise = run.FA + run.CR;
+    var missRate = nSig ? run.M / nSig : 0;
+    var faRate = nNoise ? run.FA / nNoise : 0;
+    var title;
+    var text;
+    var tone;
+
+    if (missRate <= 0.2 && faRate <= 0.2) {
+      title = '完美的一炉';
+      tone = 'good';
+      text = '没有一块坏蛋糕流出去，也没有浪费太多好蛋糕。第二天，甜点节顺利开幕，你的店门口排起了长队。';
+    } else if (missRate <= 0.2 && faRate > 0.2) {
+      title = '宁可多扔的一晚';
+      tone = 'warn';
+      text = '坏蛋糕都被你拦下了，但你扔掉了不少好蛋糕。订单勉强交上，利润薄了一些，至少没有人吃坏肚子。';
+    } else if (missRate > 0.2 && faRate <= 0.2) {
+      title = '有人吃坏了肚子';
+      tone = 'bad';
+      text = '有几块坏蛋糕被你摆上了货架。第二天，店里收到了顾客的投诉，甜点节变得不那么顺利。';
+    } else {
+      title = '最糟糕的一晚';
+      tone = 'bad';
+      text = '坏蛋糕流了出去，好蛋糕也被你扔掉不少。你既收到了投诉，又没能完成订单。';
+    }
+
+    var stats = [
+      { label: '拦下的坏蛋糕', value: run.H + ' 块' },
+      { label: '卖出的坏蛋糕', value: run.M + ' 块' },
+      { label: '扔掉的好蛋糕', value: run.FA + ' 块' },
+      { label: '顺利上架的好蛋糕', value: run.CR + ' 块' }
+    ];
+
+    var extra = '';
+    if (missRate > 0.2) {
+      extra = '<p class="ending-extra">你的漏报率是 ' + M.pct(missRate, 0) +
+        '：标准放得太松，坏蛋糕更容易溜出去。</p>';
+    } else if (faRate > 0.2) {
+      extra = '<p class="ending-extra">你的误报率是 ' + M.pct(faRate, 0) +
+        '：标准收得太紧，很多好蛋糕被浪费了。</p>';
+    }
+
+    q('storyEnding').innerHTML =
+      '<div class="ending-badge ' + tone + '">今晚的结局</div>' +
+      '<h2 class="ending-title">' + title + '</h2>' +
+      '<p class="ending-text">' + text + '</p>' +
+      '<div class="ending-stats">' + stats.map(function (item) {
+        return '<div class="ending-stat"><span>' + item.label + '</span><strong>' + item.value + '</strong></div>';
+      }).join('') + '</div>' + extra;
+  }
+
   function render(run) {
     NS.results.lastRun = run;
-    q('resTitle').textContent = '你的检测成绩';
-    q('resSub').textContent = (run.name || '游客') + ' · 系统难度 d\' = ' +
-      M.format(run.systemDPrime, 2) + ' · P(S) = ' + M.pct(run.pS, 0) +
+    q('resTitle').textContent = '最后一炉的结果';
+    q('resSub').textContent = (run.name || '游客') + ' · 今晚 20 块蛋糕 · 分辨难度 d\' = ' +
+      M.format(run.systemDPrime, 2) + ' · 坏蛋糕比例 P(S) = ' + M.pct(run.pS, 0) +
       ' · ' + new Date(run.timestamp).toLocaleString('zh-CN');
 
     q('resH').textContent = 'H = ' + run.H;
@@ -148,6 +200,7 @@
     q('resM').textContent = 'M = ' + run.M;
     q('resCR').textContent = 'CR = ' + run.CR;
 
+    renderEnding(run);
     renderStats(run);
     renderInterpretation(run);
     renderComparison(run);
